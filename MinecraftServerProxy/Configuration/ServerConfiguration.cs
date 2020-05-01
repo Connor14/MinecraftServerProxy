@@ -12,12 +12,17 @@ namespace MinecraftServerProxy.Configuration
         /// <summary>
         /// The IP Address that the Minecraft server is running on.
         /// </summary>
-        public string IPAddress { get; }
+        public string IPAddress { get; set; }
 
         /// <summary>
         /// The Port that the Minecraft server is running on.
         /// </summary>
-        public int Port { get; }
+        public int Port { get; set; }
+
+        /// <summary>
+        /// Creates an empty Minecraft server configuration.
+        /// </summary>
+        public ServerConfiguration() { }
 
         /// <summary>
         /// Creates a new Minecraft server configuration. 

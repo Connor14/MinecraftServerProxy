@@ -1,0 +1,14 @@
+{
+  "IPAddress": "127.0.0.1",
+  "Port": 25565,
+  "Servers": {
+    "connor.localhost": {
+      "IPAddress": "127.0.0.1",
+      "Port": 25570
+    },
+    "matt.localhost": {
+      "IPAddress": "127.0.0.1",
+      "Port": 25571
+    }
+  }
+}

@@ -51,7 +51,7 @@ namespace MinecraftServerProxy
 
         public override Task StartAsync(CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Worker starting at: {time}", DateTimeOffset.Now);
+            _logger.LogInformation("Proxy starting.");
 
             _proxyServer.Start();
 
@@ -60,30 +60,17 @@ namespace MinecraftServerProxy
 
         public override Task StopAsync(CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Worker stopping at: {time}", DateTimeOffset.Now);
+            _logger.LogInformation("Proxy stopping.");
 
             _proxyServer.Dispose();
 
             return base.StopAsync(cancellationToken);
         }
 
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation("Worker executing at: {time}", DateTimeOffset.Now);
-
-            while (!stoppingToken.IsCancellationRequested)
-            {
-                try
-                {
-                    await Task.Delay(1000, stoppingToken);
-                }
-                catch (TaskCanceledException taskCanceledException)
-                {
-
-                }
-            }
-
-            _logger.LogInformation("Worker finished executing at: {time}", DateTimeOffset.Now);
+            // Work is happening in the background, so we don't want this background service to stop until we cancel
+            return Task.Delay(Timeout.Infinite, stoppingToken);
         }
 
         /// <summary>
@@ -113,13 +100,16 @@ namespace MinecraftServerProxy
             // Try to remove the proxy client associated with this IpPort so that we can dispose it
             if (_proxyClients.TryRemove(e.IpPort, out ProxyClient removedProxyClient))
             {
-                removedProxyClient.Dispose();
+                // Removed Proxy Client could be null if the connection was created to the proxy but the requested server doesn't exist in the configuration
+                if (removedProxyClient != null)
+                    removedProxyClient.Dispose();
             }
         }
 
         /// <summary>
         /// Data received by the ProxyServer from a Minecraft client
         /// </summary>
+        // todo needs a try catch
         private void ProxyServer_DataReceived(object sender, DataReceivedFromClientEventArgs e)
         {
             // Try to get an existing ProxyClient associated with this IpPort
@@ -174,7 +164,14 @@ namespace MinecraftServerProxy
                     ProxyClient proxyClient = new ProxyClient(e.IpPort, serverConfiguration.IPAddress, serverConfiguration.Port);
                     proxyClient.DataReceived += ProxyClient_DataReceived;
 
-                    proxyClient.Connect();
+                    try
+                    {
+                        proxyClient.Connect();
+                    }
+                    catch (Exception exception)
+                    {
+                        _logger.LogError(exception.Message);
+                    }
 
                     // Assign the created proxy client with the IpPort of the Minecraft client being proxied
                     _proxyClients[e.IpPort] = proxyClient;
