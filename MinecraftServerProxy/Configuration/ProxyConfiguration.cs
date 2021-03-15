@@ -13,6 +13,11 @@ namespace MinecraftServerProxy.Configuration
     public class ProxyConfiguration
     {
         /// <summary>
+        /// The IConfiguration section for the ProxyConfiguration (in appsettings.json, for example)
+        /// </summary>
+        public const string Section = "ProxyConfiguration";
+
+        /// <summary>
         /// The IP Address that the proxy should listen on.
         /// </summary>
         public string IPAddress { get; set; }
@@ -27,7 +32,7 @@ namespace MinecraftServerProxy.Configuration
         /// 
         /// The key of the dictionary is the IP Address or Hostname that is used by a client to connect to the proxy. The associated value is the server where the TCP traffic should be relayed.
         /// </summary>
-        public ConcurrentDictionary<string, ServerConfiguration> Servers { get; set; }
+        public Dictionary<string, ServerConfiguration> Servers { get; set; }
 
         /// <summary>
         /// Creates an empty Minecraft server proxy configuration.
@@ -44,49 +49,7 @@ namespace MinecraftServerProxy.Configuration
             IPAddress = ipAddress;
             Port = port;
 
-            Servers = new ConcurrentDictionary<string, ServerConfiguration>();
-        }
-
-        /// <summary>
-        /// Updates this configuration using the provided configuration.
-        /// </summary>
-        /// <param name="updated"></param>
-        public void Update(ProxyConfiguration updated)
-        {
-            // todo should I do any locking so that I don't accidentally cause a race condition?
-            IPAddress = updated.IPAddress;
-            Port = updated.Port;
-
-            Servers = updated.Servers;
-        }
-
-        /// <summary>
-        /// Loads a <see cref="ProxyConfiguration" /> from a file.
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        public static ProxyConfiguration Load(string path)
-        {
-            // Read the json file
-            string json = File.ReadAllText(path);
-
-            // Get the configuration from JSON
-            var configuration = JsonSerializer.Deserialize<ProxyConfiguration>(json);
-
-            return configuration;
-        }
-
-        /// <summary>
-        /// Returns true if all of the properties on the provided <see cref="ProxyConfiguration" /> are valid.
-        /// </summary>
-        /// <param name="configuration"></param>
-        /// <returns></returns>
-        public static bool IsValid(ProxyConfiguration configuration)
-        {
-            return configuration != null
-                && !string.IsNullOrWhiteSpace(configuration.IPAddress)
-                && configuration.Port > 0
-                && configuration.Servers != null;
+            Servers = new Dictionary<string, ServerConfiguration>();
         }
     }
 }

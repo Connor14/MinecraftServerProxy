@@ -6,6 +6,8 @@ namespace MinecraftServerProxy.Configuration
 {
     /// <summary>
     /// Represents the connection information for a Minecraft server. Used by the proxy so it knows where to relay the TCP traffic. 
+    /// 
+    /// NOTE: The IPAddress and Port of a ServerConfiguration instance should not be changed after creation. This object may be referenced by active connections.
     /// </summary>
     public class ServerConfiguration
     {

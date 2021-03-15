@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using MinecraftServerProxy.Configuration;
 using System;
 using System.Collections.Generic;
@@ -9,20 +10,24 @@ namespace MinecraftServerProxy
     public static class ProxyExtensions
     {
         /// <summary>
-        /// Adds the provided <see cref="ProxyConfiguration" /> to Dependency Injection as a Singleton and adds the <see cref="ProxyWorker" /> as a Hosted Service.
+        /// Sets up <see cref="ProxyWorker"/> to proxy Minecraft clients to servers.
         /// </summary>
         /// <param name="services"></param>
         /// <param name="configuration"></param>
         /// <returns></returns>
-        public static IServiceCollection AddMinecraftServerProxy(this IServiceCollection services, ProxyConfiguration configuration)
+        public static IHostBuilder UseMinecraftServerProxy(this IHostBuilder builder)
         {
-            // Add the configuration as a singleton
-            services.AddSingleton<ProxyConfiguration>(configuration);
+            return builder
+                .ConfigureServices((hostContext, services) =>
+                {
+                    services.Configure<ProxyConfiguration>(hostContext.Configuration.GetSection(ProxyConfiguration.Section));
 
-            // Add the ProxyWorker background service
-            services.AddHostedService<ProxyWorker>();
+                    // Add the ProxyServer as a singleton
+                    services.AddSingleton<ProxyServer>();
 
-            return services;
+                    // Add the ProxyWorker background service
+                    services.AddHostedService<ProxyWorker>();
+                });
         }
 
     }
