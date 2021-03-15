@@ -99,6 +99,13 @@ The proxy reads the incoming Minecraft server handshaking information and determ
 
 This pattern of passing data from `Minecraft client -> proxy -> Minecraft server -> proxy -> Minecraft client` continues while players are connected to the server.
 
+## Future Enhancements
+
+* Windows Service / Systemd integration
+    * See https://www.nuget.org/packages/Microsoft.Extensions.Hosting.WindowsServices for Windows Services
+    * See https://www.nuget.org/packages/Microsoft.Extensions.Hosting.Systemd for Systemd
+    * Will need to be mindful of the current directory and location of `appsettings.json`
+
 ## License Information
 
 See the [Tools / Libraries](#tools--libraries) section above
