@@ -9,19 +9,21 @@ I created this project so I could run many Minecraft servers on one computer wit
 
 ## Tools / Libraries
 
-#### MinecraftServerProxy
+### MinecraftServerProxy
 
 * .NET 5.0
 * Microsoft.Extensions.Hosting - *MIT*
 * System.IO.Pipelines - *MIT*
 * Pipelines.Sockets.Unofficial (https://github.com/mgravell/Pipelines.Sockets.Unofficial) - *MIT*
 
-#### MinecraftServerProxyStandalone
+### MinecraftServerProxyStandalone
 
 * .NET 5.0
 * Serilog (https://github.com/serilog/serilog) - *Apache-2.0*
 * Serilog.Extensions.Hosting (https://github.com/serilog/serilog-extensions-hosting) - *Apache-2.0*
+* Serilog.Settings.Configuration (https://github.com/serilog/serilog-settings-configuration) - *Apache-2.0*
 * Serilog.Sinks.Console (https://github.com/serilog/serilog-sinks-console) - *Apache-2.0*
+* Serilog.Sinks.File (https://github.com/serilog/serilog-sinks-file) - *Apache-2.0*
 
 ## Getting Started
 
@@ -99,4 +101,4 @@ This pattern of passing data from `Minecraft client -> proxy -> Minecraft server
 
 ## License Information
 
-See the **Tools / Libraries** section above
+See the [Tools / Libraries](#Tools-/-Libraries) section above

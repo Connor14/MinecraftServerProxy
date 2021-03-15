@@ -19,14 +19,6 @@ namespace MinecraftServerProxyStandalone
             Console.WriteLine("Minecraft Server Proxy");
             Console.WriteLine("========================================");
 
-            // Create a new Serilog logger
-            Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Debug()
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Information) // Override the minimum level so Microsoft events are at a minimum of Information
-                .Enrich.FromLogContext()
-                .WriteTo.Console()
-                .CreateLogger();
-
             CreateHostBuilder(args).Build().Run();
         }
 
@@ -35,6 +27,10 @@ namespace MinecraftServerProxyStandalone
                 // Set up the Minecraft Server Proxy services
                 // ProxyConfiguration is read from appsettings.json by default
                 .UseMinecraftServerProxy()
-                .UseSerilog(); // Configure Microsoft.Extensions.Hosting to use Serilog as its logger
+                // Configure Microsoft.Extensions.Hosting to use Serilog as its logger
+                .UseSerilog((hostContext, services, loggerConfiguration) => 
+                    loggerConfiguration
+                        .ReadFrom.Configuration(hostContext.Configuration)
+                );
     }
 }
