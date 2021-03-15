@@ -3,7 +3,7 @@ Run multiple Minecraft: Java Edition servers behind a single port.
 
 ## About
 
-I created this project so that I could run many Minecraft servers on one computer without needing to open a new port for each one. My end goal is to use this project to create a Minecraft server control panel that can be used to manage many Minecraft servers running in Docker (check out this awesome Docker image: https://github.com/itzg/docker-minecraft-server).
+I created this project so I could run many Minecraft servers on one computer without needing to open a new port for each one. My end goal is to use this project to create a Minecraft server control panel that can be used to manage many Minecraft servers running in Docker (check out this awesome Docker image: https://github.com/itzg/docker-minecraft-server).
 
 **MinecraftServerProxy** is inspired by other projects such as https://github.com/Ktlo/MCSHub, https://github.com/handtruth/mcshub, and https://github.com/janispritzkau/minecraft-reverse-proxy (among others). 
 
@@ -11,76 +11,92 @@ I created this project so that I could run many Minecraft servers on one compute
 
 #### MinecraftServerProxy
 
-* .NET Standard 2.0
-* SimpleTCP (https://github.com/jchristn/SimpleTcp)
+* .NET 5.0
+* Microsoft.Extensions.Hosting - *MIT*
+* System.IO.Pipelines - *MIT*
+* Pipelines.Sockets.Unofficial (https://github.com/mgravell/Pipelines.Sockets.Unofficial) - *MIT*
 
-#### DemoApplication
+#### MinecraftServerProxyStandalone
 
-* .NET Core 3.1
+* .NET 5.0
+* Serilog (https://github.com/serilog/serilog) - *Apache-2.0*
+* Serilog.Extensions.Hosting (https://github.com/serilog/serilog-extensions-hosting) - *Apache-2.0*
+* Serilog.Sinks.Console (https://github.com/serilog/serilog-sinks-console) - *Apache-2.0*
 
 ## Getting Started
 
-#### Setting up
+There are multiple ways to use **MinecraftServerProxy**. 
+* Minecraft server administrators may want to use the standalone application for their networks. 
+    * See [Setting up the standalone application](#Setting-up-the-standalone-application) and [Testing the proxy](#Testing-the-proxy) for more information
+* Developers may want to integrate the **MinecraftServerProxy** library into their existing applications.
+    * See [Integrating the library](#Integrating-the-library) for more information
 
-Start by creating a new `ProxyConfiguration`. A `ProxyConfiguration` contains the listening IP Address and listening Port of the proxy server in addition to the list of Minecraft servers behind the proxy.
+### Setting up the standalone application
 
-```
-using MinecraftServerProxy.Configuration;
-...
-var configuration = new ProxyConfiguration("127.0.0.1", 25565);
-configuration.Servers["connor1.localhost"] = new ServerConfiguration("127.0.0.1", 25570);
-configuration.Servers["connor2.localhost"] = new ServerConfiguration("127.0.0.1", 25571);
-```
+This section assumes you've already downloaded a **MinecraftServerProxyStandalone** release that is appropriate for your operating system.
 
-**MinecraftServerProxy** assumes that you are using it within an ASP.NET Core web application or some other .NET Core Generic Host application (see https://docs.microsoft.com/en-us/aspnet/core/fundamentals/host/generic-host?view=aspnetcore-3.1 and https://docs.microsoft.com/en-us/aspnet/core/fundamentals/host/hosted-services?view=aspnetcore-3.1&tabs=visual-studio for more information).
+1. Download a **MinecraftServerProxyStandalone** release and default `appsettings.json` configuration file
+    * See https://github.com/Connor14/MinecraftServerProxy/releases for pre-built downloads
+2. Copy the release files and `appsettings.json` to the same directory
+    * On Linux, copy the downloaded executable to the same directory as `appsettings.json`
+    * On Windows, extract the downloaded release to the same directory as `appsettings.json`
+3. If desired, modify `appsettings.json` to configure your proxy's settings
+    * [Testing the proxy](#Testing-the-proxy) will assume you are using the default `appsettings.json`
+4. Run the `MinecraftServerProxyStandalone` executable
 
-Assuming you are using one of these types of projects, set up the `ProxyWorker` Background Service using the `AddMinecraftServerProxy` method. The `AddMinecraftServerProxy` method also takes your configuration object as a parameter.
+### Integrating the library
 
-```
-services.AddMinecraftServerProxy(configuration);
-```
+Please see [MinecraftServerProxyStandalone](https://github.com/Connor14/MinecraftServerProxy/tree/master/MinecraftServerProxyStandalone) for a full code example. 
 
-By running the `AddMinecraftServerProxy` method, you register the `ProxyConfiguration` with Dependency Injection as a *Singleton* and add the `ProxyWorker` as a *Hosted Service*. With this setup, you can access and modify the singleton `ProxyConfiguration` from your ASP.NET Core Controllers or other Dependency Injection enabled services. New Minecraft servers can be added to the `ProxyConfiguration` at runtime.
+More information to come!
 
-The next time you start your application, you should see some log messages from the `ProxyWorker`. 
-
-Please see the *DemoApplication* for a full code example. 
-
-#### Testing the proxy
+### Testing the proxy
 
 To test the proxy, we will use this Docker image: https://github.com/itzg/docker-minecraft-server. I assume you have Docker installed on your system. 
 
 *Note: When running a Minecraft server, you must accept the Minecraft EULA before the Minecraft server software will start. The following commands accept the Minecraft EULA automatically so that the containers will start properly, but please know that this does **not** mean I am accepting the Minecraft EULA on your behalf. Anyways, back to testing.*
 
-Start two Minecraft servers on different ports. The first is on port *25570* and the second is on port *25571*. Please see the `docker run` documentation for more details on the following commands (https://docs.docker.com/engine/reference/run/):
+1. Start two Minecraft servers on different ports. 
+    * The first is on port *25570* 
+    * The second is on port *25571*. 
+    
+Please see the `docker run` documentation for more details on the following commands (https://docs.docker.com/engine/reference/run/):
 
 ```
+# Run in a command line / terminal instance:
 docker run -it -e EULA=TRUE -p 25570:25565 --name mc1 --rm itzg/minecraft-server
+
+# Run in another command line / terminal instance:
 docker run -it -e EULA=TRUE -p 25571:25565 --name mc2 --rm itzg/minecraft-server
 ```
 
-Start your Minecraft: Java Edition client and navigate to the Multiplayer menu.
+2. Start your Minecraft: Java Edition client and navigate to the Multiplayer menu.
 
-In the Multiplayer menu, click *Add Server*. Enter **Minecraft Server 1** as the *Server Name* and **connor1.localhost** as the *Server Address*. Click *Done*. 
+3. Navigate to the Multiplayer menu 
+    * Click *Add Server*
+    * Enter **Minecraft Server 1** as the *Server Name* and **connor1.localhost** as the *Server Address*
+    * Click *Done*
+    * Click *Add Server* again
+    * This time enter the details for the second server instance: **Minecraft Server 2** and **connor2.localhost**
+    * Click *Done*
 
-Click *Add Server* again. This time enter the details for the second server instance: **Minecraft Server 2** and **connor2.localhost**.
+4. If you haven't started a **MinecraftServerProxyStandalone** instance yet, you will notice that neither server is responding
+    * This is because you are trying to connect to **connor1.localhost** and **connor2.localhost** using the default port of **25565**. 
+    * Your servers are running on ports **25570** and **25571** respectively. 
+    * This is where the proxy comes in.
 
-Once you've finished entering the details, you'll notice that neither server is responding. This is because you are trying to connect to **connor1.localhost** and **connor2.localhost** using the default port of **25565**. Your servers are running on ports **25570** and **25571** respectively. This is where the proxy comes in.
+5. Start **MinecraftServerProxyStandalone** and click *Refresh* in the Minecraft client. Your servers should now be acccessible. 
 
-Start your **MinecraftServerProxy** enabled project and click *Refresh* in the Minecraft client. Your servers should now be acccessible. 
-
-Joining *Minecraft Server 1* will take you to the first server while joining *Minecraft Server 2* will take you to the other server.
+6. Joining *Minecraft Server 1* will take you to the first server while joining *Minecraft Server 2* will take you to the other server.
 
 ## How it works
 
-When you join **connor1.localhost** in the Multiplayer menu, the Minecraft client tries to connect to the Minecraft server running on **connor1.localhost:25565**. There isn't a Minecraft server running at this location. Our proxy is. 
+When you join **connor1.localhost** in the Multiplayer menu, the Minecraft client tries to connect to the Minecraft server running on **connor1.localhost:25565**. There isn't a Minecraft server running at this location. The proxy is. 
 
-The proxy reads the incoming Minecraft server handshaking information and determines that the Minecraft client is trying to connect to **connor1.localhost**. The proxy searches the `ProxyConfiguration` for **connor1.localhost** and sees that **connor1.localhost** is associated with **127.0.0.1:25570**. The proxy sends the data from the Minecraft client to the Minecraft server running on **127.0.0.1:25570**. When the proxy receives the response from the server, it returns the response to the Minecraft client. 
+The proxy reads the incoming Minecraft server handshaking information and determines that the Minecraft client is trying to connect to **connor1.localhost**. The proxy searches the `ProxyConfiguration` in `appsettings.json` for **connor1.localhost** and sees that **connor1.localhost** is associated with **127.0.0.1:25570**. The proxy sends the data from the Minecraft client to the Minecraft server running on **127.0.0.1:25570**. When the proxy receives the response from the server, it returns the response to the Minecraft client. 
 
-This pattern of passing data from Minecraft client -> proxy -> Minecraft server -> proxy -> Minecraft client continues while players are connected to the server.
+This pattern of passing data from `Minecraft client -> proxy -> Minecraft server -> proxy -> Minecraft client` continues while players are connected to the server.
 
 ## License Information
 
-#### SimpleTCP
-
-**SimpleTCP** is licensed under the *MIT* license by https://github.com/jchristn
+See the **Tools / Libraries** section above
