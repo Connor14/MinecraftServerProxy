@@ -101,4 +101,4 @@ This pattern of passing data from `Minecraft client -> proxy -> Minecraft server
 
 ## License Information
 
-See the [Tools / Libraries](#Tools-/-Libraries) section above
+See the [Tools / Libraries](#tools--libraries) section above
