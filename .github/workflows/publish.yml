@@ -9,24 +9,30 @@ jobs:
     
     steps:
       - uses: actions/checkout@v2
+      
       - name: Setup .NET
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 5.0.x
           
-      - shell: bash
+      - name: Restore dependencies
+        working-directory: ./MinecraftServerProxy
+        run: dotnet restore
+        
+      - name: Build
+        working-directory: ./MinecraftServerProxy
+        run: dotnet build --no-restore -c Release
+        
+      - name: Pack
+        working-directory: ./MinecraftServerProxy
+        run: dotnet pack --no-build -c Release
+        
+      - name: Push
+        shell: bash
         env:
           NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
-          
-      - name: Restore dependencies
-        run: dotnet restore
-        working-directory: ./MinecraftServerProxy
-      - name: Build
-        run: dotnet build --no-restore -c Release
-        working-directory: ./MinecraftServerProxy
-      - name: Pack
-        run: dotnet pack --no-build -c Release
-        working-directory: ./MinecraftServerProxy
-      - name: Push
-        run: dotnet nuget push MinecraftServerProxy.*.nupkg --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json
         working-directory: ./MinecraftServerProxy/bin/Release
+        run: dotnet nuget push MinecraftServerProxy.*.nupkg --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json
+        
+        
+        
