@@ -55,7 +55,7 @@ namespace MinecraftServerProxy
         {
             try
             {
-                await _clientToProxy.Input.LinkToAsync(_proxyToServer.Output, cancellationToken);
+                await _clientToProxy.Input.CopyToAsync(_proxyToServer.Output, cancellationToken);
             }
             catch (Exception exception)
             {
@@ -72,7 +72,7 @@ namespace MinecraftServerProxy
         {
             try
             {
-                await _proxyToServer.Input.LinkToAsync(_clientToProxy.Output, cancellationToken);
+                await _proxyToServer.Input.CopyToAsync(_clientToProxy.Output, cancellationToken);
             }
             catch (Exception exception)
             {

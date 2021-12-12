@@ -7,14 +7,14 @@ namespace MinecraftServerProxy.Configuration
     /// <summary>
     /// Represents the connection information for a Minecraft server. Used by the proxy so it knows where to relay the TCP traffic. 
     /// 
-    /// NOTE: The IPAddress and Port of a ServerConfiguration instance should not be changed after creation. This object may be referenced by active connections.
+    /// NOTE: The Hostname and Port of a ServerConfiguration instance should not be changed after creation. This object may be referenced by active connections.
     /// </summary>
     public class ServerConfiguration
     {
         /// <summary>
         /// The IP Address that the Minecraft server is running on.
         /// </summary>
-        public string IPAddress { get; set; }
+        public string Hostname { get; set; }
 
         /// <summary>
         /// The Port that the Minecraft server is running on.
@@ -29,11 +29,11 @@ namespace MinecraftServerProxy.Configuration
         /// <summary>
         /// Creates a new Minecraft server configuration. 
         /// </summary>
-        /// <param name="ipAddress">The IP Address that the Minecraft server is running on.</param>
+        /// <param name="hostname">The Hostname or IP Address that the Minecraft server is running on.</param>
         /// <param name="port">The Port that the Minecraft server is running on.</param>
-        public ServerConfiguration(string ipAddress, int port)
+        public ServerConfiguration(string hostname, int port)
         {
-            IPAddress = ipAddress;
+            Hostname = hostname;
             Port = port;
         }
     }

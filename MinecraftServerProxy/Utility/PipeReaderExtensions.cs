@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Buffers;
-using System.Collections.Generic;
 using System.IO.Pipelines;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -133,96 +131,6 @@ namespace MinecraftServerProxy.Utility
             consumedTo = buffer.GetPosition(completePacketLength, buffer.Start);
 
             return true;
-        }
-
-        /// <summary>
-        /// Similar to CopyToAsync but uses a custom CopyToAsync implementation to check if the PipeWriter is completed after a write.
-        /// </summary>
-        /// <param name="source"></param>
-        /// <param name="destination"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        public static Task LinkToAsync(this PipeReader source, PipeWriter destination, CancellationToken cancellationToken = default)
-        {
-            return CopyToAsync(source, destination, cancellationToken);
-        }
-
-        // Source: https://github.com/dotnet/runtime/blob/main/src/libraries/System.IO.Pipelines/src/System/IO/Pipelines/PipeReader.cs
-        // Slightly modified from original so IsCompleted could be checked on the write result.
-        private static Task CopyToAsync(PipeReader source, PipeWriter destination, CancellationToken cancellationToken = default)
-        {
-            if (destination == null)
-            {
-                throw new ArgumentNullException(nameof(destination));
-            }
-
-            if (cancellationToken.IsCancellationRequested)
-            {
-                return Task.FromCanceled(cancellationToken);
-            }
-
-            return CopyToAsyncCore(source, destination, async (destination, memory, cancellationToken) =>
-            {
-                FlushResult result = await destination.WriteAsync(memory, cancellationToken).ConfigureAwait(false);
-
-                if (result.IsCanceled)
-                {
-                    throw new OperationCanceledException("Write canceled");
-                }
-
-                // ADDED RETURN VALUE
-                return result;
-            },
-            cancellationToken);
-        }
-
-        // Source: https://github.com/dotnet/runtime/blob/main/src/libraries/System.IO.Pipelines/src/System/IO/Pipelines/PipeReader.cs
-        // Slightly modified from original so IsCompleted could be checked on the write result.
-        private static async Task CopyToAsyncCore<TStream>(PipeReader source, TStream destination, Func<TStream, ReadOnlyMemory<byte>, CancellationToken, ValueTask<FlushResult>> writeAsync, CancellationToken cancellationToken)
-        {
-            while (true)
-            {
-                ReadResult result = await source.ReadAsync(cancellationToken).ConfigureAwait(false);
-                ReadOnlySequence<byte> buffer = result.Buffer;
-                SequencePosition position = buffer.Start;
-                SequencePosition consumed = position;
-
-                try
-                {
-                    if (result.IsCanceled)
-                    {
-                        throw new OperationCanceledException("Read canceled");
-                    }
-
-                    while (buffer.TryGet(ref position, out ReadOnlyMemory<byte> memory))
-                    {
-                        // ADDED RETURN VALUE
-                        var writeResult = await writeAsync(destination, memory, cancellationToken).ConfigureAwait(false);
-
-                        consumed = position;
-
-                        // ADDED
-                        if (writeResult.IsCompleted)
-                        {
-                            break;
-                        }
-                    }
-
-                    // The while loop completed succesfully, so we've consumed the entire buffer.
-                    consumed = buffer.End;
-
-                    if (result.IsCompleted)
-                    {
-                        break;
-                    }
-                }
-                finally
-                {
-                    // Advance even if WriteAsync throws so the PipeReader is not left in the
-                    // currently reading state
-                    source.AdvanceTo(consumed);
-                }
-            }
         }
     }
 }

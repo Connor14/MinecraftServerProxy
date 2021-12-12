@@ -123,11 +123,11 @@ namespace MinecraftServerProxy
             }
 
             // Connect to the server
-            using (var proxyToServer = await SocketConnection.ConnectAsync(new IPEndPoint(IPAddress.Parse(destination.IPAddress), destination.Port)))
+            using (var proxyToServer = await SocketConnection.ConnectAsync(new DnsEndPoint(destination.Hostname, destination.Port)))
             // Create a scope to resolve the logger from
             using (var scope = _serviceProvider.CreateScope())
             {
-                _logger.LogInformation("Client {client} - connected to server at {ipAddress}:{port}", remoteEndpoint, destination.IPAddress, destination.Port);
+                _logger.LogInformation("Client {client} - connected to server at {hostname}:{port}", remoteEndpoint, destination.Hostname, destination.Port);
 
                 // Create the proxy connection between the Minecraft client and Minecraft server
                 var proxiedConnectionLogger = scope.ServiceProvider.GetRequiredService<ILogger<ProxiedConnection>>();
