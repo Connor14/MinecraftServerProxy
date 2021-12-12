@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -8,9 +8,13 @@
     <Authors>Connor14</Authors>
     <PackageProjectUrl>https://github.com/Connor14/MinecraftServerProxy</PackageProjectUrl>
     <PackageTags>minecraft, server, proxy, networking, port</PackageTags>
-    <PackageReleaseNotes>[1.0.0]
+    <PackageReleaseNotes>[1.1.0]
+* Updated to .NET 6.0
+* Enable the use of Hostnames and/or IP Addresses in server configurations
+
+[1.0.0]
 * Initial release</PackageReleaseNotes>
-    <Version>1.0.0</Version>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

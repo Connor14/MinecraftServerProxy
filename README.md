@@ -11,14 +11,14 @@ I created this project so I could run many Minecraft servers on one computer wit
 
 ### MinecraftServerProxy
 
-* .NET 5.0
+* .NET 6.0
 * Microsoft.Extensions.Hosting - *MIT*
 * System.IO.Pipelines - *MIT*
 * Pipelines.Sockets.Unofficial (https://github.com/mgravell/Pipelines.Sockets.Unofficial) - *MIT*
 
 ### MinecraftServerProxyStandalone
 
-* .NET 5.0
+* .NET 6.0
 * Serilog (https://github.com/serilog/serilog) - *Apache-2.0*
 * Serilog.Extensions.Hosting (https://github.com/serilog/serilog-extensions-hosting) - *Apache-2.0*
 * Serilog.Settings.Configuration (https://github.com/serilog/serilog-settings-configuration) - *Apache-2.0*
