@@ -27,6 +27,12 @@ namespace MinecraftServerProxyStandalone
                 // Set up the Minecraft Server Proxy services
                 // ProxyConfiguration is read from appsettings.json by default
                 .UseMinecraftServerProxy()
+                // Setup service management
+#if WINDOWS
+                .UseWindowsService()
+#elif LINUX
+                .UseSystemd()
+#endif
                 // Configure Microsoft.Extensions.Hosting to use Serilog as its logger
                 .UseSerilog((hostContext, services, loggerConfiguration) => 
                     loggerConfiguration
