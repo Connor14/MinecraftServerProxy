@@ -46,6 +46,23 @@ This section assumes you've already downloaded a **MinecraftServerProxyStandalon
     * [Testing the proxy](#Testing-the-proxy) will assume you are using the default `appsettings.json`
 4. Run the `MinecraftServerProxyStandalone` executable
 
+You can also run the application as a service. Here are the additional steps:
+
+#### Linux Systemd
+
+For more information, see the Microsoft Blog Post: https://devblogs.microsoft.com/dotnet/net-core-and-systemd/
+
+1. Copy the `MinecraftServerProxyStandalone.service` file to `/etc/systemd/system`
+2. Run `sudo systemctl daemon-reload`
+3. Run `sudo systemctl status MinecraftServerProxyStandalone` and check output
+4. Run `sudo systemctl start MinecraftServerProxyStandalone.service` to start the service
+5. Run `sudo systemctl status MinecraftServerProxyStandalone` again and check output
+6. Run `sudo systemctl enable MinecraftServerProxyStandalone.service` to start when the machine starts
+
+#### Windows Service
+
+TODO
+
 ### Integrating the library
 
 Please see [MinecraftServerProxyStandalone](https://github.com/Connor14/MinecraftServerProxy/tree/master/MinecraftServerProxyStandalone) for a full code example. 

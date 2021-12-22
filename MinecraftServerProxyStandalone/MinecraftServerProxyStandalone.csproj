@@ -12,11 +12,6 @@
     <PackageReleaseNotes>[1.0.0]
 * Initial release</PackageReleaseNotes>
     <Version>1.0.0</Version>
-
-	<!-- Constants used during compilation -->
-	<!-- Based on https://stackoverflow.com/a/59916801 and https://stackoverflow.com/a/50168331 -->
-	<DefineConstants Condition="'$(RuntimeIdentifier)' == 'win-x64' OR '$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))' ">$(DefineConstants);WINDOWS</DefineConstants>
-	<DefineConstants Condition="'$(RuntimeIdentifier)' == 'linux-x64' OR '$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' ">$(DefineConstants);LINUX</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -41,6 +36,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MinecraftServerProxy\MinecraftServerProxy.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="MinecraftServerProxyStandalone.service">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

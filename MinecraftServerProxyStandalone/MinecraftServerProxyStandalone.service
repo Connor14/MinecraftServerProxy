@@ -1,0 +1,12 @@
+﻿[Unit]
+Description=Minecraft Server Proxy Standalone
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=notify
+WorkingDirectory=/home/connor/MinecraftServerProxy
+ExecStart=/home/connor/MinecraftServerProxy/MinecraftServerProxyStandalone
+
+[Install]
+WantedBy=multi-user.target
