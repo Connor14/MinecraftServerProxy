@@ -39,8 +39,13 @@ namespace MinecraftServerProxy.Packets
             sequenceReader.TryReadUShort(out ushort port, out int read5);
             sequenceReader.TryReadVarInt(out int nextState, out int read6);
 
-            // Chop off the \0FML\0 or \0FML2\0
-            serverAddress = serverAddress.Substring(0, serverAddress.IndexOf('\0'));
+            // Chop off the \0FML\0 or \0FML2\0 if it exsits
+            var indexOfNullChar = serverAddress.IndexOf('\0');
+
+            if (indexOfNullChar != -1)
+            {
+                serverAddress = serverAddress.Substring(0, indexOfNullChar);
+            }
 
             return new HandshakePacket(packet, protocolVersion, serverAddress, port, (State)nextState);
         }
